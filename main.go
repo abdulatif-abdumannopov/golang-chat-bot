@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
+	"os"
 	"telegram/config"
 	"telegram/handlers"
 	"telegram/models"
@@ -23,7 +26,28 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	handlers.SetupHandlers(bot, db)
+
+	// Получаем порт от Render
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Значение по умолчанию
+	}
+
+	// 🔥 Запускаем HTTP-сервер в отдельной горутине
+	go func() {
+		http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+			fmt.Println(w, "pong")
+		})
+
+		log.Printf("🔹 Запускаем HTTP сервер на порту %s", port)
+		err := http.ListenAndServe(":"+port, nil)
+		if err != nil {
+			log.Fatal("❌ Ошибка запуска сервера:", err)
+		}
+	}()
+
 	// Запуск бота
 	bot.Start()
 }
