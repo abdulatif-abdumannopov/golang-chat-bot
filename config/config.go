@@ -8,12 +8,19 @@ import (
 )
 
 func LoadEnv() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("❌ Ошибка загрузки .env")
+	// Загружаем .env ТОЛЬКО если работаем не в Render
+	if os.Getenv("RENDER") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Println("⚠️ .env не найден, используем переменные окружения")
+		}
 	}
 }
 
 func GetBotToken() string {
-	return os.Getenv("BOT_TOKEN")
+	token := os.Getenv("BOT_TOKEN")
+	if token == "" {
+		log.Fatal("❌ Переменная окружения BOT_TOKEN не задана!")
+	}
+	return token
 }
