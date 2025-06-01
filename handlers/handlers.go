@@ -16,7 +16,7 @@ var activeChats = make(map[int64]int64)
 var replyChats = make(map[int64]int64)
 var mu sync.Mutex
 
-const ADMIN_ID int64 = 7751874405
+const ADMIN_ID int64 = 0
 
 var replyMarkup = &telebot.ReplyMarkup{}
 var replyBtn = replyMarkup.Data("Ответить", "reply")
